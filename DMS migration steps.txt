@@ -1,0 +1,111 @@
+# 🛠️ AWS DMS Migration Steps: Local PostgreSQL to AWS RDS PostgreSQL
+
+This document outlines the step-by-step process to perform a database migration using AWS Database Migration Service (DMS), migrating from a local PostgreSQL database to an AWS RDS PostgreSQL database.
+
+---
+
+# 📋 Project Overview
+
+| Item | Details |
+|---|---|
+| Source | Local PostgreSQL (`sampledb`) |
+| Target | AWS RDS PostgreSQL (`sampledb`) |
+| Migration Tool | AWS Database Migration Service (DMS) |
+| Replication Mode | Full Load (Migrate existing data only) |
+
+---
+
+# 🏗️ Step-by-Step Migration Plan
+
+## 1. Prepare Source and Target Databases
+
+- Local PostgreSQL (`sampledb`) is set up.
+- AWS RDS PostgreSQL (`sampledb`) is running and accessible.
+- Confirm both databases are reachable from the DMS Replication Instance.
+
+
+## 2. Create DMS Replication Instance
+
+- Navigate to **AWS DMS Console → Replication Instances → Create Replication Instance**.
+- Settings:
+  - Name: `dms-replication-instance`
+  - Instance Class: `dms.t3.micro`
+  - Publicly Accessible: Yes (for this PoC)
+  - VPC: Same as RDS instance
+- Wait until the instance status is **available**.
+
+
+## 3. Create Endpoints
+
+### Source Endpoint (Local PostgreSQL)
+- Endpoint Type: Source
+- Endpoint Identifier: `local-postgres-source`
+- Engine: PostgreSQL
+- Server Name: Public IP of your laptop (use [https://whatismyipaddress.com/](https://whatismyipaddress.com/))
+- Port: 5432
+- Database Name: `sampledb`
+- Username: `postgres`
+- Password: Your local PostgreSQL password
+- SSL Mode: None (for PoC)
+
+✅ Test connection: Should succeed after replication instance is up.
+
+### Target Endpoint (AWS RDS PostgreSQL)
+- Endpoint Type: Target
+- Endpoint Identifier: `rds-postgres-target`
+- Engine: PostgreSQL
+- Server Name: RDS endpoint URL
+- Port: 5432
+- Database Name: `sampledb`
+- Username: `postgres`
+- Password: RDS master password
+
+✅ Test connection: Should succeed.
+
+
+## 4. Create Migration Task
+
+- Navigate to **Database Migration Tasks → Create Task**.
+- Settings:
+  - Task Name: `sampledb-migration-task`
+  - Replication Instance: `dms-replication-instance`
+  - Source Endpoint: `local-postgres-source`
+  - Target Endpoint: `rds-postgres-target`
+  - Migration Type: Migrate existing data only
+  - Target Table Preparation Mode: Do nothing (assume tables already exist)
+- Table Mapping: Include all tables (`customers`, `products`, `orders`).
+
+✅ Start task on create.
+
+
+## 5. Monitor and Validate Migration
+
+- Task should move from **Starting → Running → Load complete**.
+- Check `sampledb` on AWS RDS:
+  - Verify tables with `\dt`
+  - Check sample data with `SELECT * FROM customers;`, etc.
+  - Ensure row counts match source.
+
+
+---
+
+# 🧠 Lessons Learned and Best Practices
+
+- Ensure source and target are fully accessible by DMS.
+- Configure security groups properly to allow port 5432 connections.
+- Monitor task logs for errors such as network issues or permission errors.
+- Validate data carefully after migration.
+- After successful migration, restrict public access if no longer needed.
+
+---
+
+# 📂 Related Files in This Project
+
+- `scripts/create_schema.sql`
+- `dumps/sampledb_dump.sql`
+- `migration_steps/native_pg_dump_restore.md`
+- `migration_steps/dms_migration_steps.md`
+- `migration_steps/migration_report.md`
+
+
+✅ This document demonstrates a real-world cloud migration using AWS Database Migration Service (DMS) for PostgreSQL databases.
