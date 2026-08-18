@@ -10,6 +10,7 @@ It covers:
 
 ## Project Structure
 aws-db-migration-poc/
+
 ├── README.md
 ├── scripts/
     └── create_schema.sql
@@ -19,33 +20,6 @@ aws-db-migration-poc/
     ├── native_pg_dump_restore.md
     └── migration_report.md
 ├── screenshots/
-
-## Tools and Services Used
-- PostgreSQL 17 (local setup)
-- AWS RDS PostgreSQL (Free Tier, db.t3.micro)
-- AWS Management Console (RDS setup)
-- GitHub for version control and documentation
-- Bash terminal for CLI commands (psql, pg_dump)
-
-
-## Migration Overview
-- Set up a local PostgreSQL database (sampledb)
-- Created schema and loaded sample data
-- Exported database using pg_dump
-- Launched an AWS RDS PostgreSQL instance
-- Restored the dump file into AWS RDS using psql
-- Validated data integrity after migration
-
-## Validation Steps
-- Connected to AWS RDS using psql.
-- Verified all tables and relationships (customers, products, orders).
-- Queried data samples to ensure full migration success.
-
-## Key Learnings and Outcomes
-- Hands-on exposure to native PostgreSQL backup and restore operations.
-- Practical understanding of cloud database services (AWS RDS).
-- Importance of security group configurations for cloud database access.
-- Best practices in migration validation and operational documentation.
 
 ## Tools and Services Used
 - PostgreSQL 17 (local setup)
