@@ -12,13 +12,21 @@ It covers:
 aws-db-migration-poc/
 
 ├── README.md
+
 ├── scripts/
+
     └── create_schema.sql
+    
 ├── dumps/
+
     └── sampledb_dump.sql
+    
 ├── migration_steps/
+
     ├── native_pg_dump_restore.md
+    
     └── migration_report.md
+    
 ├── screenshots/
 
 ## Tools and Services Used
